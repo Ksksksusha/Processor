@@ -1,20 +1,42 @@
-#include <asm.h>
+#include "asm.h"
+
+#include "../commands.h"
+
+ void print_main_info(FILE* bytecode)
+ {
+    fputs(SIGN, bytecode);
+    fprintf(bytecode, "\nVersion: %d\n", VERSION);
+    fprintf(bytecode, "Number of program commands: %d\n", CMD_N);
+ }
 
 void asm_()
 {
     FILE *program = NULL;
     program = fopen("text.txt", "r");
 
-    FILE *bitecode = NULL;
-    bitecode = fopen("bitecode.txt", "w");
+    if(program == NULL)
+    { 
+        printf("File reading error text.txt in ASM\n");
+        return;
+    }
+
+    FILE *bytecode = NULL;
+    bytecode = fopen("bytecode.txt", "w");
+
+    if(bytecode == NULL)
+    { 
+        printf("File reading error bytecode.txt in ASM\n");
+        return;
+    }
+
+    print_main_info(bytecode);
 
     char* str;
 
-    int cmd = 0xC0DE;
-
+    int cmd = NONE_CMD; 
     bool read = true;
 
-    int number;
+    int number = NAN;
 
     while(read)
     {
@@ -27,28 +49,62 @@ void asm_()
                 cmd = cmd_name[i].value;
             }
         }
-        
+
+        /////////////////////
         switch (cmd)
         {
-        case 0xD0DE:                                               
-            printf("Unknown command. \nCheck the input file and restart the program.\n");
-            fprintf(bitecode, "Invalid file, don`t use it!");
+        case NONE_CMD:  
+
+            printf("File reading error.\nCheck the input file and restart the program.\n");
+            fprintf(bytecode, "File reading error, this file is invalid\n");
             
             read = false;
 
-            [[fallthrough]];
+            break;
+
         case HTL:                                               
             printf("File translation is completed.\n");
             read = false;
 
-            [[fallthrough]];
+            break;
+
         case PUSH:                                             
             fscanf(program, "%d\n", &number);
-            fprintf(bitecode, "%d %d", cmd, number);
+            fprintf(bytecode, "%d %d", cmd, number);
 
-            [[fallthrough]];
+            break;
+
+        
+        case DIV:  [[fallthrough]];
+        
+        case SUB:  [[fallthrough]];
+        
+        case OUT:  [[fallthrough]];
+        
+        case ADD:  [[fallthrough]];
+        
+        case MUL:  [[fallthrough]];
+        
+        case SQRT: [[fallthrough]];
+        
+        case SIN:  [[fallthrough]];
+        
+        case COS:  [[fallthrough]];
+        
+        case IN: 
+        
+        fprintf(bytecode, "%d\n", cmd);
+
+        break;
+
         default: 
-            fprintf(bitecode, "%d", cmd);
-        };
+            printf("Unknown command. \nCheck the input file and restart the program.\n");
+            fprintf(bytecode, "Invalid file, don`t use it!");
+            
+            read = false;
+        }
     }
+
+    fclose(program);
+    fclose(bytecode);
 }

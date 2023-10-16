@@ -5,7 +5,6 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "commands_.h"
-
-
 void asm_();
+
+void  print_main_info(FILE* bitecode);

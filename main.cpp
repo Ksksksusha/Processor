@@ -1,8 +1,8 @@
-#include <asm.h>
+#include "asm.h"
 
-#include <disasm.h>
+#include "disasm.h"
 
-#include <spu.h>
+#include "spu.h"
 
 void calculator()
 {
@@ -12,6 +12,6 @@ void calculator()
 
     printf("We have assembled the file.\n");
 
-    printf("Answer: %d\n", calc());
+    calc();
 
 }

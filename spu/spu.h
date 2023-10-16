@@ -1,7 +1,14 @@
 #include "safety_stack.h"
 
-#include "commands_.h"
+#define CHECK_SIZE(stk, num) if((stk)->size < num)                                             \
+{                                                                                       \
+    printf("There are not enough elements in the stack to perform the operation\n");    \
+                                                                                        \
+    read = false;                                                                       \
+                                                                                        \
+    break;                                                                              \
+}                                                                                       
 
-Elem_t calc();
+void calc();
 
 void calculator();

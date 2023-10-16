@@ -1,14 +1,16 @@
 #include "spu.h"
 
-Elem_t calc()
+#include "../commands.h"
+
+void calc()
 { 
-    FILE *bitecode = NULL;
-    bitecode = fopen("bitecode.txt", "r");
+    FILE *bytecode = NULL;
+    bytecode = fopen("bytecode.txt", "r");
     
-    if (bitecode == NULL)
+    if (bytecode == NULL)
     {
         printf("Ошибка открытия файла, переданного в SPU \n");
-        return 0;
+        return;
     }
 
     safety_stack* stk;
@@ -18,89 +20,122 @@ Elem_t calc()
     Elem_t number = TRASH_ELEM;
     Elem_t elem_a = TRASH_ELEM;
     Elem_t elem_b = TRASH_ELEM;
-    bool read = true;
+    bool read = false;
 
 
     while(read)
     {
-        fscanf(bitecode, "%d", &command);
+        fscanf(bytecode, "%d", &command);
 
         switch (command)
         {
-        case HTL:                                                //htl
-            printf("File reading is complete.\n");
+        case HTL:                                                
+            printf("Calculating is complete.\n");
+
             read = false;
 
-            [[fallthrough]];
-        case PUSH:                                               //push
-            fscanf(bitecode, "%d", &number);
+            break;
+
+        case PUSH:                                               
+            fscanf(bytecode, "%d", &number);
             stack_push_s(stk, number);
 
-            [[fallthrough]];
-        case DIV:                                                 //div /
+            break;
+
+        case DIV:                                                
+            CHECK_SIZE(stk, 2);
+            
             elem_b = stack_pop_s(stk);
             elem_a = stack_pop_s(stk);
-            stack_push_s(stk, elem_a / elem_b);
 
-            [[fallthrough]];
-        case SUB:                                                 //sub -
+            if(elem_b == 0)
+            {
+                printf("ERROR:\nDividing by zero\n");
+                read = false;
+            }else
+            {
+                stack_push_s(stk, elem_a / elem_b); 
+
+                break;
+            }
+
+            break;
+
+        case SUB:                                                   
+            CHECK_SIZE(stk, 2);
+                                                         
             elem_b = stack_pop_s(stk);
             elem_a = stack_pop_s(stk);
-            stack_push_s(stk, elem_a - elem_b);
+            stack_push_s(stk, elem_a - elem_b); // TODO: check return value
 
-            [[fallthrough]];
-        case OUT:                                                 //out
-            printf("Calculating is complete.\n");
-            read = false;
+            break;
 
-            [[fallthrough]];
-        case ADD:                                                 //add +
+        case OUT:                                                       
+            CHECK_SIZE(stk, 1);
+                                                                                                     
+            printf("Answer is %d\n", stack_pop_s(stk));
+
+            break;
+
+        case ADD:                                                       
+            CHECK_SIZE(stk, 2);
+                                                             
             elem_b = stack_pop_s(stk);
             elem_a = stack_pop_s(stk);
             stack_push_s(stk, elem_a + elem_b);
 
-            [[fallthrough]];
-        case MUL:                                                 //mul *
+            break;
+
+        case MUL:                                                     
+            CHECK_SIZE(stk, 2);
+                                                              
             elem_b = stack_pop_s(stk);
             elem_a = stack_pop_s(stk);
             stack_push_s(stk, elem_a * elem_b);
 
-            [[fallthrough]];
-        case SQRT:                                                //sqrt
-            elem_a = stack_pop_s(stk);
-            stack_push_s(stk, sqrt(elem_a));
-
-            [[fallthrough]];
-        case SIN:                                                 //sin
-            elem_a = stack_pop_s(stk);
-            stack_push_s(stk, sin(elem_a));
-
-            [[fallthrough]];
-        case COS:                                                 //cos
-            elem_a = stack_pop_s(stk);
-            stack_push_s(stk, cos(elem_a));
-
-            [[fallthrough]];
-        case IN:                                                   //in
-            printf("Enter the number: ");
-            scanf("%d", number);
-            stack_push_s(stk, number);
-            [[fallthrough]];
-        default: 
             break;
-        };
+
+        case SQRT:                                                       
+            CHECK_SIZE(stk, 1);
+                                                            
+            elem_a = stack_pop_s(stk);
+            stack_push_s(stk, (Elem_t) sqrt(elem_a));
+
+            break;
+
+        case SIN:                                                    
+            CHECK_SIZE(stk, 1);
+                                                               
+            elem_a = stack_pop_s(stk);
+            stack_push_s(stk, (Elem_t) sin(elem_a));
+
+            break;
+
+        case COS:                                                   
+            CHECK_SIZE(stk, 1);
+                                                                 
+            elem_a = stack_pop_s(stk);
+            stack_push_s(stk, (Elem_t) cos(elem_a));
+
+            break;
+
+        case IN:                                                  
+            printf("Enter the number: ");
+            scanf("%d", &number);
+            stack_push_s(stk, number);
+
+            break;
+
+        default: 
+
+            printf("Unknown command. \nCheck bytecode file and restart the program.\n");
+
+            read = false;
+
+            break;
+        }
     }
 
-    if(stk->size == 1)
-    {
-        Elem_t answer = stack_pop_s(stk);
-        printf("We calculated the answer: %d", answer);
-        return answer;
-    }else
-    {
-        printf("ERROR \n Formula is not correct\n");
-        STACK_DUMP_S(stk);
-        return NAN;
-    }
+    fclose(bytecode);
 
 }
