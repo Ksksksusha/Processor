@@ -47,6 +47,7 @@ void asm_()
             break;
         }
 
+        cmd = NONE_CMD;
 
         for(int i = 0; i < CMD_N; i++)
         {
@@ -56,13 +57,14 @@ void asm_()
             }
         }
 
-        /////////////////////
         switch (cmd)
         {
         case NONE_CMD:  
 
             printf("File reading error.\nCheck the input file and restart the program.\n");
             fprintf(bytecode, "File reading error, this file is invalid\n");
+
+            return;
             
             read = false;
 
