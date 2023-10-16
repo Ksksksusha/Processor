@@ -10,12 +10,15 @@
 
 #define STACK_DUMP_S(stk) stack_dump_s((stk), __LINE__, __FILE__, __PRETTY_FUNCTION__)
 #define STACK_CTOR_S(stk) stack_ctor_s((stk), #stk,  __LINE__, __FILE__, __PRETTY_FUNCTION__)
-#define  STK_STATUS_S(stk) stk->status = stack_ok_s(stk);                                               \
-    if(stk->status)                                                                                 \
+#define  STK_STATUS_S(stk)                                               \
+    if(stack_ok_s(stk))                                                                                 \
     {                                                                                               \
         printf("\n\nERROR \nWe have problem with stack in %s \n", __PRETTY_FUNCTION__);             \
-        print_stack_status_s(stk->status);                                                            \
-        STACK_DUMP_S(stk);                                                                            \
+        print_stack_status_s(stk->status);                                                              \
+        STACK_DUMP_S(stk);                                                                              \
+    }else                                                                                               \
+    {                                                                                                   \
+        stk->status = stack_ok_s(stk);                                                                  \
     }
 
 typedef int Elem_t;
@@ -45,13 +48,13 @@ struct safety_stack
 {
     Canary_t canary_stack_left = CANARY_ELEM;
 
-    Canary_t* canary_left;
-    Canary_t* canary_right;
+    Canary_t* canary_left = nullptr;
+    Canary_t* canary_right = nullptr;
 
     unsigned int hash;
 
     Elem_t* data;//указатель на начало массива, не на канарейку в случае стека с защитой
-    long long size;
+    long long size = 0;
     long long capacity;
     int status;
 

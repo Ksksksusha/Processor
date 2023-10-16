@@ -17,28 +17,23 @@ static const char errors[12][50] = {
 
 int stack_ctor_s(safety_stack* stk, const char* name, int line, const char* file, const char* func)
 {
+
     if(stk == NULL)
     {
         printf("ERROR:\nStruct pointer = NULL\n");
         return -1;
     }
 
-    if(stk->data)
-    {
-        STACK_DUMP_S(stk);
-        return -2;
-    }
-    
     void* addr = malloc(sizeof(Canary_t)*2 + sizeof(Elem_t)*STACK_CAPACITY);
 
-    if(addr == NULL)
+    if(addr == nullptr)
     {
         printf("ERROR:\nstk->data == NULL\n");
         stk->status = NEGATIVE_POINTER;
         STACK_DUMP_S(stk);
         return stk->status;
     }
-
+   
     stk->canary_left = (Canary_t*) addr;
     stk->data = (Elem_t*) (stk->canary_left + 1);
     stk->canary_right = (Canary_t*) (stk->data + STACK_CAPACITY);
@@ -70,6 +65,12 @@ int stack_ctor_s(safety_stack* stk, const char* name, int line, const char* file
 int stack_ok_s(safety_stack* stk)
 {
     int error = 0;
+
+    if(stk == nullptr) 
+    {
+        printf("Stk is nullptr!\n");
+        return 1000;
+    }
 
     if(stk->size < 0) error |= NEGATIVE_SIZE;
     

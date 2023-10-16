@@ -12,7 +12,7 @@
 void asm_()
 {
     FILE *program = NULL;
-    program = fopen("text.txt", "r");
+    program = fopen("program.txt", "r");
 
     if(program == NULL)
     { 
@@ -29,9 +29,8 @@ void asm_()
         return;
     }
 
-    print_main_info(bytecode);
+    //print_main_info(bytecode);
 
-    char* str;
 
     int cmd = NONE_CMD; 
     bool read = true;
@@ -40,7 +39,14 @@ void asm_()
 
     while(read)
     {
-        fscanf(program, "%s", str);
+
+        char str[30] = "";
+
+        if(fscanf(program, "%s", str) == EOF)
+        {
+            break;
+        }
+
 
         for(int i = 0; i < CMD_N; i++)
         {
@@ -62,7 +68,8 @@ void asm_()
 
             break;
 
-        case HTL:                                               
+        case HTL:     
+            fprintf(bytecode, "%d\n", cmd);                                          
             printf("File translation is completed.\n");
             read = false;
 
@@ -70,7 +77,7 @@ void asm_()
 
         case PUSH:                                             
             fscanf(program, "%d\n", &number);
-            fprintf(bytecode, "%d %d", cmd, number);
+            fprintf(bytecode, "%d\n%d\n", cmd, number);
 
             break;
 

@@ -4,7 +4,7 @@
 
 #include "spu.h"
 
-void calculator()
+int main()
 {
     printf("Hi! \nWe have already started making calculations, follow the instructions below\n");
 
@@ -14,4 +14,9 @@ void calculator()
 
     calc();
 
+    printf("We have calculated result.\n");
+
+    disasm_();
+
+    return 0;
 }

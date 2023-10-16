@@ -35,7 +35,7 @@ void disasm_()
             break;
 
         case HTL:                                               
-            fputs(cmd_name[HTL].name_cmd, program);
+            fputs(cmd_name[0].name_cmd, program);/////именно 0!!!!!!!!!!
 
             printf("File translation is completed.\n");
 
@@ -48,7 +48,7 @@ void disasm_()
 
             fputs(cmd_name[PUSH].name_cmd, program);
 
-            fprintf(program, "%d\n", number);
+            fprintf(program, " %d\n", number);
 
             break;
 
@@ -70,6 +70,8 @@ void disasm_()
         
         case IN:
             fputs(cmd_name[cmd].name_cmd, program);
+
+            fprintf(program, "\n");
 
             break;
 
