@@ -1,6 +1,6 @@
 #include "safety_stack.h"
 
-static const char errors[12][50] = {
+static const char errors[13][50] = {
     "Stack has negative size\n",
     "Stack has negative pointer\n",
     "Stack has negative capacity\n", 
@@ -13,6 +13,7 @@ static const char errors[12][50] = {
     "Left canary catch error in struct\n", 
     "Right canary catch error in struct\n", 
     "Hash doesn't match\n",
+    "Stack struct has null pointer\n"
 };
 
 int stack_ctor_s(safety_stack* stk, const char* name, int line, const char* file, const char* func)
@@ -69,7 +70,8 @@ int stack_ok_s(safety_stack* stk)
     if(stk == nullptr) 
     {
         printf("Stk is nullptr!\n");
-        return 1000;
+        error |= NULL_POINTER_STRUCT_STK;
+        return error;
     }
 
     if(stk->size < 0) error |= NEGATIVE_SIZE;
@@ -114,7 +116,11 @@ void print_stack_status_s(int error)
 
     for(int error_iter = 0; error_iter < 12; error_iter++)
     {
-        if((error &= (1 << error_iter)) > 0) puts(errors[error_iter]);
+        if((error &= (1 << error_iter)) > 0)
+        {
+            puts(errors[error_iter]);
+            printf("\n");
+        } 
     }
 }
 

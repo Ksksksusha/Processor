@@ -1,6 +1,6 @@
 static const char* SIGN = "shk";
 
-static const int VERSION = 1;
+static const int VERSION = 2;
 
 static const int CMD_N = 11;
 

@@ -40,7 +40,8 @@ enum stack_status_s {ALL_IS_OK = 0,
                     NEGATIVE_ITER_RIGHT_CANARY = 1 << 8,
                     LEFT_STRUCT_CANARY = 1 << 9,
                     RIGHT_STRUCT_CANARY = 1 << 10,
-                    HASH_ERROR = 1 << 11};
+                    HASH_ERROR = 1 << 11,
+                    NULL_POINTER_STRUCT_STK = 1 << 12};
 
 
 
