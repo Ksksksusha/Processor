@@ -1,8 +1,5 @@
 #include "spu.h"
 
-#include "../commands.h"
-
-
 
 void spu_dump(spu_struct* spu)
 {
@@ -63,12 +60,14 @@ void spu_dtor(spu_struct* spu)
         spu->reg[i] = TRASH_ELEM;
     }
 
+    free(spu->code);
+
     stack_dtor_s(&spu->stk);
 
     &spu == NULL;
 }
 
-void calc()
+void calc(spu_struct* spu)
 { 
     FILE *bytecode = NULL;
     bytecode = fopen("bytecode.txt", "r");
@@ -79,8 +78,6 @@ void calc()
         return;
     }
 
-    spu_struct spu = {};
-    spu_ctor(&spu);
 
     Elem_t command = TRASH_ELEM;
     Elem_t number = TRASH_ELEM;
@@ -103,15 +100,15 @@ void calc()
 
         case PUSH:                                               
             fscanf(bytecode, "%d", &number);
-            stack_push_s(&spu.stk, number);
+            stack_push_s(&spu->stk, number);
 
             break;
 
         case DIV:                                                
-            CHECK_SIZE(&spu.stk, 2);
+            CHECK_SIZE(&spu->stk, 2);
             
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
+            elem_b = stack_pop_s(&spu->stk);
+            elem_a = stack_pop_s(&spu->stk);
 
             if(elem_b == 0)
             {
@@ -119,7 +116,7 @@ void calc()
                 read = false;
             }else
             {
-                stack_push_s(&spu.stk, elem_a / elem_b); 
+                stack_push_s(&spu->stk, elem_a / elem_b); 
 
                 break;
             }
@@ -127,74 +124,74 @@ void calc()
             break;
 
         case SUB:                                                   
-            CHECK_SIZE(&spu.stk, 2);
+            CHECK_SIZE(&spu->stk, 2);
                                                          
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a - elem_b); // TODO: check return value
+            elem_b = stack_pop_s(&spu->stk);
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, elem_a - elem_b); // TODO: check return value
 
             break;
 
         case OUT:                                                       
-            CHECK_SIZE(&spu.stk, 1);
+            CHECK_SIZE(&spu->stk, 1);
                                                                                                      
-            printf("Answer is %d\n", stack_pop_s(&spu.stk));
+            printf("Answer is %d\n", stack_pop_s(&spu->stk));
 
             break;
 
         case ADD:                                                       
-            CHECK_SIZE(&spu.stk, 2);
+            CHECK_SIZE(&spu->stk, 2);
                                                              
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a + elem_b);
+            elem_b = stack_pop_s(&spu->stk);
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, elem_a + elem_b);
 
             break;
 
         case MUL:                                                     
-            CHECK_SIZE(&spu.stk, 2);
+            CHECK_SIZE(&spu->stk, 2);
                                                               
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a * elem_b);
+            elem_b = stack_pop_s(&spu->stk);
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, elem_a * elem_b);
 
             break;
 
         case SQRT:                                                       
-            CHECK_SIZE(&spu.stk, 1);
+            CHECK_SIZE(&spu->stk, 1);
                                                             
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, (Elem_t) sqrt(elem_a));
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, (Elem_t) sqrt(elem_a));
 
             break;
 
         case SIN:                                                    
-            CHECK_SIZE(&spu.stk, 1);
+            CHECK_SIZE(&spu->stk, 1);
                                                                
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, (Elem_t) sin(elem_a));
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, (Elem_t) sin(elem_a));
 
             break;
 
         case COS:                                                   
-            CHECK_SIZE(&spu.stk, 1);
+            CHECK_SIZE(&spu->stk, 1);
                                                                  
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, (Elem_t) cos(elem_a));
+            elem_a = stack_pop_s(&spu->stk);
+            stack_push_s(&spu->stk, (Elem_t) cos(elem_a));
 
             break;
 
         case IN:                                                  
             printf("Enter the number: ");
             scanf("%d", &number);
-            stack_push_s(&spu.stk, number);
+            stack_push_s(&spu->stk, number);
 
             break;
 
         case RPUSH: 
 
             fscanf(bytecode, "%d", &number);
-            stack_push_s(&spu.stk, spu.reg[number]);
+            stack_push_s(&spu->stk, spu->reg[number]);
 
             break;
 
@@ -202,7 +199,7 @@ void calc()
 
             fscanf(bytecode, "%d", &number);
 
-            spu.reg[number] = stack_pop_s(&spu.stk);
+            spu->reg[number] = stack_pop_s(&spu->stk);
 
             break;
 
@@ -216,7 +213,6 @@ void calc()
         }
     }
 
-    stack_dtor_s(&spu.stk);
 
     fclose(bytecode);
 

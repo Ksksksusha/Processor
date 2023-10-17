@@ -1,3 +1,8 @@
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
+#include "safety_stack.h"
+
 static const char* SIGN = "shk";
 
 static const int VERSION = 3;
@@ -23,6 +28,17 @@ enum commands
     RPUSH = 33
 };
 
+struct spu_struct
+{
+    safety_stack stk;
+
+    Elem_t reg[4];
+
+    int n_cmd;
+
+    Elem_t* code;
+};
+
 
 typedef struct 
 {
@@ -45,3 +61,18 @@ const name cmd_name[] = {
     {"rpush", 33},
     {"rpop", 43}
 };
+
+
+enum spu_status{NULL_POINTER_STRUCT_SPU = 1 << 13};
+
+void spu_dump(spu_struct* spu);
+
+int spu_ok(spu_struct* spu);
+
+void print_spu_status(spu_struct* spu);
+
+int spu_ctor(spu_struct* spu);
+
+void spu_dtor(spu_struct* spu);
+
+#endif //COMMANDS_H

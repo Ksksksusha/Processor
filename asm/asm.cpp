@@ -1,7 +1,5 @@
 #include "asm.h"
 
-#include "../commands.h"
-
  void print_main_info(FILE* bytecode)
  {
     fputs(SIGN, bytecode);
@@ -9,7 +7,7 @@
     fprintf(bytecode, "Number of program commands: %d\n", CMD_N);
  }
 
-void asm_()
+void asm_(spu_struct* spu)
 {
     FILE *program = NULL;
     program = fopen("program.txt", "r");
@@ -23,11 +21,14 @@ void asm_()
     FILE *bytecode = NULL;
     bytecode = fopen("bytecode.txt", "w");
 
+
     if(bytecode == NULL)
     { 
         printf("File reading error bytecode.txt in ASM\n");
         return;
     }
+
+    int ip = 0;
 
     //print_main_info(bytecode);
 
@@ -74,7 +75,12 @@ void asm_()
 
         case HTL:     
 
-            fprintf(bytecode, "%d\n", cmd);                                          
+            fprintf(bytecode, "%d\n", cmd);    
+
+            *(spu->code + ip) = cmd;  
+
+            spu->n_cmd = ip+1;
+
             printf("File translation is completed.\n");
             read = false;
 
@@ -84,6 +90,10 @@ void asm_()
 
             fscanf(program, "%d\n", &number);
             fprintf(bytecode, "%d\n%d\n", cmd, number);
+
+            *(spu->code + ip) = cmd;
+            *(spu->code + ip + 1) = number;    
+            ip+=2;       
 
             break;
 
@@ -95,6 +105,11 @@ void asm_()
             if(strlen(str_reg) == 3 && str_reg[0] == 'r' && (str_reg[1] - 'a') >=0 && (str_reg[1] - 'a') < 4 && str_reg[2] == 'x')
             {
                 fprintf(bytecode, "%d\n%d\n", cmd, (str_reg[1] - 'a'));
+
+                *(spu->code + ip) = cmd;
+                *(spu->code + ip + 1) = (str_reg[1] - 'a');    
+                ip+=2;
+
             }else
             {
                 printf("Unknown register. \nCheck the input file and restart the program.\n");
@@ -113,6 +128,11 @@ void asm_()
             if(strlen(str_reg) == 3 && str_reg[0] == 'r' && (str_reg[1] - 'a') >=0 && (str_reg[1] - 'a') < 4 && str_reg[2] == 'x')
             {
                 fprintf(bytecode, "%d\n%d\n", cmd, (str_reg[1] - 'a'));
+
+                *(spu->code + ip) = cmd;
+                *(spu->code + ip + 1) = (str_reg[1] - 'a');    
+                ip+=2;
+
             }else
             {
                 printf("Unknown register. \nCheck the input file and restart the program.\n");
@@ -142,6 +162,10 @@ void asm_()
         case IN: 
         
         fprintf(bytecode, "%d\n", cmd);
+
+        *(spu->code + ip) = cmd;  
+        ip++;       
+
 
         break;
 
