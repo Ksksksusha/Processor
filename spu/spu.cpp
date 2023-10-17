@@ -191,6 +191,21 @@ void calc()
 
             break;
 
+        case RPUSH: 
+
+            fscanf(bytecode, "%d", &number);
+            stack_push_s(&spu.stk, spu.reg[number]);
+
+            break;
+
+        case RPOP:
+
+            fscanf(bytecode, "%d", &number);
+
+            spu.reg[number] = stack_pop_s(&spu.stk);
+
+            break;
+
         default: 
 
             printf("Unknown command. \nCheck bytecode file and restart the program.\n");

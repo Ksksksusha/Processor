@@ -42,6 +42,8 @@ void asm_()
 
         char str[30] = "";
 
+        char str_reg[30] = "";
+
         if(fscanf(program, "%s", str) == EOF)
         {
             break;
@@ -71,19 +73,56 @@ void asm_()
             break;
 
         case HTL:     
+
             fprintf(bytecode, "%d\n", cmd);                                          
             printf("File translation is completed.\n");
             read = false;
 
             break;
 
-        case PUSH:                                             
+        case PUSH:  
+
             fscanf(program, "%d\n", &number);
             fprintf(bytecode, "%d\n%d\n", cmd, number);
 
             break;
 
         
+        case RPUSH: 
+
+            fscanf(program, "%s", str_reg);
+
+            if(strlen(str_reg) == 3 && str_reg[0] == 'r' && (str_reg[1] - 'a') >=0 && (str_reg[1] - 'a') < 4 && str_reg[2] == 'x')
+            {
+                fprintf(bytecode, "%d\n%d\n", cmd, (str_reg[1] - 'a'));
+            }else
+            {
+                printf("Unknown register. \nCheck the input file and restart the program.\n");
+                fprintf(bytecode, "Invalid file, don`t use it!");
+            
+                read = false;
+            }
+
+            break;
+
+
+        case RPOP:
+
+            fscanf(program, "%s", str_reg);
+
+            if(strlen(str_reg) == 3 && str_reg[0] == 'r' && (str_reg[1] - 'a') >=0 && (str_reg[1] - 'a') < 4 && str_reg[2] == 'x')
+            {
+                fprintf(bytecode, "%d\n%d\n", cmd, (str_reg[1] - 'a'));
+            }else
+            {
+                printf("Unknown register. \nCheck the input file and restart the program.\n");
+                fprintf(bytecode, "Invalid file, don`t use it!");
+            
+                read = false;
+            }
+
+            break;
+
         case DIV:  [[fallthrough]];
         
         case SUB:  [[fallthrough]];

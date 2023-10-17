@@ -1,0 +1,17 @@
+///DEF_CMD(name, num, args, code);
+
+DEF_CMD(htl  , -1, 0, )
+DEF_CMD(push ,  1, 1, )
+DEF_CMD(div  ,  2, 0, )
+DEF_CMD(sub  ,  3, 0, )
+DEF_CMD(out  ,  4, 0, )
+DEF_CMD(add  ,  5, 0, )
+DEF_CMD(mul  ,  6, 0, )
+DEF_CMD(sqrt ,  7, 0, )
+DEF_CMD(sin  ,  8, 0, )
+DEF_CMD(cos  ,  9, 0, )
+DEF_CMD(in   , 10, 0, )
+//DEF_CMD(jmp  , 12, 0, )
+DEF_CMD(rpush, 33, 1, )
+DEF_CMD(rpop , 43, 0, )
+//DEF_CMD()

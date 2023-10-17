@@ -52,6 +52,28 @@ void disasm_()
 
             break;
 
+        case RPUSH:
+
+            fscanf(bytecode, "%d", &number);
+
+            fputs(cmd_name[11].name_cmd, program);
+
+            fprintf(program, " r%cx\n", 'a'+ number);
+
+            break;
+
+        case RPOP:
+
+            fscanf(bytecode, "%d", &number);
+
+            fputs(cmd_name[12].name_cmd, program);
+
+            fprintf(program, " r%cx\n", 'a'+ number);
+
+            break;
+
+
+
         case DIV:  [[fallthrough]];
         
         case SUB:  [[fallthrough]];

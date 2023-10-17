@@ -1,8 +1,8 @@
 static const char* SIGN = "shk";
 
-static const int VERSION = 2;
+static const int VERSION = 3;
 
-static const int CMD_N = 11;
+static const int CMD_N = 13;
 
 #define NONE_CMD 0xC0DE
 
@@ -18,7 +18,9 @@ enum commands
     SQRT = 7,
     SIN = 8,
     COS = 9,
-    IN = 10
+    IN = 10,
+    RPOP = 43,
+    RPUSH = 33
 };
 
 
@@ -39,5 +41,7 @@ const name cmd_name[] = {
     {"sqrt", 7},
     {"sin", 8},
     {"cos", 9},
-    {"in", 10}
+    {"in", 10},
+    {"rpush", 33},
+    {"rpop", 43}
 };
