@@ -14,9 +14,11 @@ void disasm_()
 
     int cmd = NONE_CMD;
 
+    int reg_n = 5;
+
     bool read = true;
 
-    int number;
+    Arg_t number;
 
     while(read)
     {
@@ -44,31 +46,34 @@ void disasm_()
             break;
 
         case PUSH:            
-            fscanf(bytecode, "%d", &number);
+            fscanf(bytecode, "%lg", &number);
 
             fputs(cmd_name[PUSH].name_cmd, program);
 
-            fprintf(program, " %d\n", number);
+            fprintf(program, " %lg\n", number);
 
             break;
 
         case RPUSH:
 
-            fscanf(bytecode, "%d", &number);
+            fscanf(bytecode, "%d", &reg_n);
 
             fputs(cmd_name[11].name_cmd, program);
 
-            fprintf(program, " r%cx\n", 'a'+ number);
+            //решается бинарником!!!!!!!!!!
+            //проверить номер регистра
+
+            fprintf(program, " r%cx\n", 'a'+ reg_n);
 
             break;
 
         case RPOP:
 
-            fscanf(bytecode, "%d", &number);
+            fscanf(bytecode, "%d", &reg_n);
 
             fputs(cmd_name[12].name_cmd, program);
 
-            fprintf(program, " r%cx\n", 'a'+ number);
+            fprintf(program, " r%cx\n", 'a'+ reg_n);
 
             break;
 

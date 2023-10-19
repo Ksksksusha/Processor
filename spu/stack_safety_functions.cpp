@@ -152,10 +152,10 @@ void stack_dump_s(safety_stack* stk, int line, const char* file, const char* fun
     {
         if(stk_iter < stk->size)
         {
-            printf("\t\t*[%lld] = %d;\n", stk_iter, *(stk->data + stk_iter));
+            printf("\t\t*[%lld] = %lg;\n", stk_iter, *(stk->data + stk_iter));
         }else
         {
-            printf("\t\t [%lld] = %d;\n", stk_iter, *(stk->data + stk_iter));
+            printf("\t\t [%lld] = %lg;\n", stk_iter, *(stk->data + stk_iter));
         }
     }
 

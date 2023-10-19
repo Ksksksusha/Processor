@@ -1,4 +1,4 @@
-push 3
+push 3.0987
 rpop rax
 rpush rax
 rpush rax

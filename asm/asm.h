@@ -5,8 +5,6 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "../commands.h"
-
-void asm_(spu_struct* spu);
+void asm_();
 
 void  print_main_info(FILE* bitecode);

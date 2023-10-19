@@ -21,7 +21,7 @@
         stk->status = stack_ok_s(stk);                                                                  \
     }
 
-typedef int Elem_t;
+typedef double Elem_t;
 typedef unsigned long long Canary_t;
 
 const Elem_t TRASH_ELEM = 0xBA0BAB;
