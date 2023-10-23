@@ -20,7 +20,7 @@ struct spu_struct
 
     Arg_t reg[4];
 
-    Arg_t* code;
+    void* code;
 };
 
 void spu_dump(spu_struct* spu);

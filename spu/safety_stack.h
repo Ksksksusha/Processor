@@ -10,10 +10,10 @@
 
 #define STACK_DUMP_S(stk) stack_dump_s((stk), __LINE__, __FILE__, __PRETTY_FUNCTION__)
 #define STACK_CTOR_S(stk) stack_ctor_s((stk), #stk,  __LINE__, __FILE__, __PRETTY_FUNCTION__)
-#define  STK_STATUS_S(stk)                                               \
+#define  STK_STATUS_S(stk)                                                                              \
     if(stack_ok_s(stk))                                                                                 \
-    {                                                                                               \
-        printf("\n\nERROR \nWe have problem with stack in %s \n", __PRETTY_FUNCTION__);             \
+    {                                                                                                   \
+        printf("\n\nERROR \nWe have problem with stack in %s \n", __PRETTY_FUNCTION__);                 \
         print_stack_status_s(stk->status);                                                              \
         STACK_DUMP_S(stk);                                                                              \
     }else                                                                                               \

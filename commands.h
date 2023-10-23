@@ -16,9 +16,10 @@ enum commands
 {
     #include "def_cmd.h"
 };
+#undef DEF_CMD
 
 enum byte
 {
-    BYTE_REG = 1<<6,
-    BYTE_ARG = 1<<7
+    BYTE_REG = 1 << 6,
+    BYTE_ARG = 1 << 7
 };

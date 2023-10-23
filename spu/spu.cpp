@@ -1,10 +1,9 @@
 #include "spu.h"
 
-
 #define DEF_CMD(name, num, code)        \
     case CMD_##name:                    \
         code                            \
-        break;                          
+        break;           
 
 
 void spu_dump(spu_struct* spu)
@@ -87,14 +86,13 @@ void calc()
     spu_struct spu = {};
     spu_ctor(&spu);
 
-/*
 
     // определяем размер файла
     fseek(bytecode , 0 , SEEK_END);                          // устанавливаем позицию в конец файла
-    long code_size = ftell(bytecode);                            // получаем размер в байтах
+    size_t code_size = (size_t) ftell(bytecode);                            // получаем размер в байтах
     rewind (bytecode);                                       // устанавливаем указатель в конец файла
     
-    spu.code = (Elem_t*) calloc(sizeof(Elem_t), code_size);      // выделить память для хранения содержимого файла
+    spu.code = calloc(sizeof(char), (code_size + 1));      // выделить память для хранения содержимого файла
     if (spu.code == NULL)
     {
         printf("Ошибка выделения памяти для spu.code\n");///ошибка с code
@@ -108,7 +106,7 @@ void calc()
     
     //содержимое файла теперь находится в буфере
 
-*/ 
+
 
     char command = TRASH_ELEM;
     int reg_n = TRASH_ELEM;
@@ -117,9 +115,12 @@ void calc()
     Arg_t elem_b = TRASH_ELEM;
     bool read = true;
 
+    void* ip = spu.code;
+
     while(read)
     {
-        fscanf(bytecode, "%c", &command);
+        command = *((char*) ip);
+        ip = (void*) (((char*) ip) + 1); 
 
         switch (command)
         {
@@ -141,3 +142,5 @@ void calc()
     fclose(bytecode);
 
 }
+
+#undef DEF_CMD
