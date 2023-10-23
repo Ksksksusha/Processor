@@ -1,6 +1,12 @@
 #include "spu.h"
 
 
+#define DEF_CMD(name, num, code)        \
+    case CMD_##name:                    \
+        code                            \
+        break;                          
+
+
 void spu_dump(spu_struct* spu)
 {
     puts(SIGN);
@@ -104,7 +110,7 @@ void calc()
 
 */ 
 
-    int command = TRASH_ELEM;
+    char command = TRASH_ELEM;
     int reg_n = TRASH_ELEM;
     Arg_t number = TRASH_ELEM;
     Arg_t elem_a = TRASH_ELEM;
@@ -113,121 +119,12 @@ void calc()
 
     while(read)
     {
-        fscanf(bytecode, "%d", &command);
+        fscanf(bytecode, "%c", &command);
 
         switch (command)
         {
-        case HTL:                                                
-            printf("Calculating is complete.\n");
-
-            read = false;
-
-            break;
-
-        case PUSH:                                               
-            fscanf(bytecode, "%lg", &number);
-            stack_push_s(&spu.stk, number);
-
-            break;
-
-        case DIV:                                                
-            CHECK_SIZE(&spu.stk, 2);
-            
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-
-            if(elem_b == 0)
-            {
-                printf("ERROR:\nDividing by zero\n");
-                read = false;
-            }else
-            {
-                stack_push_s(&spu.stk, elem_a / elem_b); 
-
-                break;
-            }
-
-            break;
-
-        case SUB:                                                   
-            CHECK_SIZE(&spu.stk, 2);
-                                                         
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a - elem_b); // TODO: check return value
-
-            break;
-
-        case OUT:                                                       
-            CHECK_SIZE(&spu.stk, 1);
-                                                                                                     
-            printf("Answer is %lg\n", stack_pop_s(&spu.stk));
-
-            break;
-
-        case ADD:                                                       
-            CHECK_SIZE(&spu.stk, 2);
-                                                             
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a + elem_b);
-
-            break;
-
-        case MUL:                                                     
-            CHECK_SIZE(&spu.stk, 2);
-                                                              
-            elem_b = stack_pop_s(&spu.stk);
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, elem_a * elem_b);
-
-            break;
-
-        case SQRT:                                                       
-            CHECK_SIZE(&spu.stk, 1);
-                                                            
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, sqrt(elem_a));
-
-            break;
-
-        case SIN:                                                    
-            CHECK_SIZE(&spu.stk, 1);
-                                                               
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, sin(elem_a));
-
-            break;
-
-        case COS:                                                   
-            CHECK_SIZE(&spu.stk, 1);
-                                                                 
-            elem_a = stack_pop_s(&spu.stk);
-            stack_push_s(&spu.stk, cos(elem_a));
-
-            break;
-
-        case IN:                                                  
-            printf("Enter the number: ");
-            scanf("%lg", &number);
-            stack_push_s(&spu.stk, number);
-
-            break;
-
-        case RPUSH: 
-
-            fscanf(bytecode, "%d", &reg_n);
-            stack_push_s(&spu.stk, spu.reg[reg_n]);
-
-            break;
-
-        case RPOP:
-
-            fscanf(bytecode, "%d", &reg_n);
-
-            spu.reg[reg_n] = stack_pop_s(&spu.stk);
-
-            break;
+        
+        #include "def_cmd.h"
 
         default: 
 
