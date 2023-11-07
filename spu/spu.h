@@ -1,3 +1,6 @@
+#ifndef SPU_H
+#define SPU_H
+
 #include "safety_stack.h"
 
 #include "../commands.h"
@@ -20,7 +23,7 @@ struct spu_struct
 
     Arg_t reg[4];
 
-    void* code;
+    Arg_t* code;
 };
 
 void spu_dump(spu_struct* spu);
@@ -33,4 +36,8 @@ int spu_ctor(spu_struct* spu);
 
 void spu_dtor(spu_struct* spu);
 
+static unsigned char* read_buf(const char* filename);
+
 void calc();
+
+#endif //SPU_H

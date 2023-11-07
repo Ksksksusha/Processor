@@ -1,3 +1,6 @@
+#ifndef ASM_H
+#define ASM_H
+
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
@@ -8,3 +11,7 @@
 void asm_();
 
 void  print_main_info(FILE* bitecode);
+
+void* byte_alignment_8(void* ip);
+
+#endif //ASM_H

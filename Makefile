@@ -10,4 +10,7 @@ CCFLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Waggressive-loop-optimi
 		   -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
 all:
-	g++ -I asm -I spu -I disasm -I . main.cpp asm/asm.cpp spu/spu.cpp spu/stack_safety_functions.cpp disasm/disasm.cpp $(CCFLAGS) -o calculator2
+	g++ -I asm -I spu -I disasm -I . main.cpp asm/asm.cpp spu/spu.cpp spu/stack_safety_functions.cpp disasm/disasm.cpp $(CCFLAGS) -o calculator
+
+asm: asm/asm.cpp
+	# g++ flagi tvoi -o asm.elf

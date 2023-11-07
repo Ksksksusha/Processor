@@ -2,25 +2,34 @@
 
 #include "../commands.h"
 
-#define DEF_CMD(name, num, code)                                                                                                            \
-    case DEF_##name                                                                                                                         \
-        fputs(#name, program);                                                                                                              \
-        fprintf(program, "\n");                                                                                                             \
-        if((num &= BYTE_ARG) > 0/*считать arg*/))                                                                                           \
-        {                                                                                                                                   \
-            arg = *((Arg_t*) ip);                                                                                                           \
-            ip = (void*) (((Arg_t*) ip) + 1);                                                                                               \
-            fprintf(program, "%lg\n", arg);                                                                                                 \
-        }else                                                                                                                               \
-        {                                                                                                                                   \
-            if((num &= BYTE_REG) > 0/*считать reg_n*/)                                                                                      \
-            {                                                                                                                               \
-                reg_n = *((int*) ip);                                                                                                       \
-                ip = (void*) (((int*) ip) + 1);                                                                                             \                
-                fprintf(program, " r%cx\n", 'a'+ reg_n);                                                                                    \                                                                                                                       \
-            }                                                                                                                               \
-        }                                                                                                                                   \
+static unsigned char* read_buf(const char* filename)
+{
+    FILE *input_file = NULL;
+    input_file = fopen(filename, "rb");
     
+    if (input_file == NULL)
+    {
+        printf("Ошибка открытия файла, переданного в SPU\n \n");
+        return NULL;
+    }
+
+    size_t file_size = 0, read_size = 0;
+
+    struct stat filestat;
+    stat(filename, &filestat);
+    file_size = (size_t)filestat.st_size;
+
+    unsigned char *buf = (unsigned char*)calloc(file_size + 2, sizeof(char));
+    read_size = fread(buf, sizeof(char), file_size, input_file);
+    if(read_size < file_size){
+        printf("fread read less than size!\n");
+    }
+
+    buf[read_size] = NON_EXIST_CMD;
+
+    fclose(input_file);
+    return buf;
+}
 
 
 void disasm_()
@@ -28,31 +37,15 @@ void disasm_()
     FILE *program = NULL;
     program = fopen("text.txt", "w");
 
-    FILE *bytecode = NULL;
-    bytecode = fopen("bytecode.txt", "r");
+    unsigned char* buf = read_buf("bytecode.bin");
 
-
-    // определяем размер файла
-    fseek(bytecode , 0 , SEEK_END);                          // устанавливаем позицию в конец файла
-    size_t code_size = (size_t) ftell(bytecode);                            // получаем размер в байтах
-    rewind (bytecode);                                       // устанавливаем указатель в конец файла
-    
-    void* buf = calloc(sizeof(char), (code_size + 1));      // выделить память для хранения содержимого файла
     if (buf == NULL)
     {
-        printf("Ошибка выделения памяти для spu.code\n");///ошибка с code
+        printf("Ошибка открытия buf, переданного в SPU\n \n");
+        return;
     }
-    
-    size_t result = fread(buf, 1, code_size, bytecode);       // считываем файл в буфер
-    if (result != code_size)
-    {
-        printf("Ошибка чтения\n");
-    }
-    
-    //содержимое файла теперь находится в буфере
 
-
-    void* ip = buf;
+    unsigned char* ip = buf;
 
     char* str;
 
@@ -68,13 +61,95 @@ void disasm_()
     {
         //fscanf(bytecode, "%d", &cmd);
 
-        cmd = *((char*) ip);
-        ip = (void*) (((char*) ip) + 1); 
+        cmd = *ip;
+        ip = ip + 1;
 
         switch (cmd)
         {
 
-        #include "def_cmd.h"
+        case NONE_CMD:
+            printf("File reading error.\n");
+            
+            fprintf(program, "File reading error, this file is invalid\n");
+
+            read = false;
+
+            break;
+
+        case HTL:                                               
+            fputs(cmd_name[0].name_cmd, program);/////именно 0!!!!!!!!!!
+
+            printf("File translation is completed.\n");
+
+            read = false;
+
+            break;
+
+        case PUSH:            
+            //fscanf(bytecode, "%lg", &number);
+
+            number = *((Arg_t*) ip);
+
+            ip = (unsigned char*) (((Arg_t*) ip) + 1);
+
+            fputs(cmd_name[PUSH].name_cmd, program);
+
+            fprintf(program, " %lg\n", number);
+
+            break;
+
+        case RPUSH:
+
+            //fscanf(bytecode, "%d", &reg_n);
+
+            reg_n = *ip;
+            ip = ip + 1;
+
+            fputs(cmd_name[11].name_cmd, program);
+
+            //проверить номер регистра
+
+            fprintf(program, " r%cx\n", 'a'+ reg_n);
+
+            break;
+
+        case RPOP:
+
+            //fscanf(bytecode, "%d", &reg_n);
+
+            reg_n = *ip;
+            ip = ip + 1;
+
+            fputs(cmd_name[12].name_cmd, program);
+
+            fprintf(program, " r%cx\n", 'a'+ reg_n);
+
+            break;
+
+
+
+        case DIV:  [[fallthrough]];
+        
+        case SUB:  [[fallthrough]];
+        
+        case OUT:  [[fallthrough]];
+        
+        case ADD:  [[fallthrough]];
+        
+        case MUL:  [[fallthrough]];
+        
+        case SQRT: [[fallthrough]];
+        
+        case SIN:  [[fallthrough]];
+        
+        case COS:  [[fallthrough]];
+        
+        case IN:
+            fputs(cmd_name[cmd].name_cmd, program);
+
+            fprintf(program, "\n");
+
+            break;
 
         default: 
 
@@ -84,11 +159,8 @@ void disasm_()
             read = false;
         };
 
-    
     }
 
-    fclose(bytecode);
+    free(buf);
     fclose(program);
 }
-
-#undef DEF_CMD
